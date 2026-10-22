@@ -1,5 +1,5 @@
 name: rust1100-check
-description: Find where your CI, scripts and dependencies break on Rust 1.100
+description: Find where your CI YAML, scripts and Cargo dependencies break on Rust 1.100
 branding:
   icon: alert-triangle
   color: orange
@@ -9,12 +9,16 @@ inputs:
     description: Repository root to scan
     required: false
     default: "."
-  args:
-    description: Extra arguments, e.g. `--min-publish-age "7 days"` or `--fail-on warning`
+  min-publish-age:
+    description: Preview Cargo's cooldown with this age, e.g. "7 days". Empty to skip
     required: false
     default: ""
+  fail-on:
+    description: Lowest severity that fails the step (error, warning, note, never)
+    required: false
+    default: "error"
   version:
-    description: rust1100-check version to install from crates.io
+    description: Release of rust1100-check to use
     required: false
     default: "0.1.0"
 
@@ -25,11 +29,29 @@ runs:
       shell: bash
       env:
         VERSION: ${{ inputs.version }}
-      run: cargo install rust1100-check --locked --version "$VERSION"
+      run: |
+        case "$RUNNER_OS-$RUNNER_ARCH" in
+          Linux-X64) target=x86_64-unknown-linux-gnu ;;
+          macOS-ARM64) target=aarch64-apple-darwin ;;
+          macOS-X64) target=x86_64-apple-darwin ;;
+          *) target="" ;;
+        esac
+        bin="$RUNNER_TEMP/rust1100-check-bin"
+        mkdir -p "$bin"
+        url="https://github.com/majiayu000/rust1100-check/releases/download/v$VERSION/cargo-rust1100-check-$target.tar.gz"
+        if [ -n "$target" ] && curl -fsSL "$url" | tar -xz -C "$bin"; then
+          echo "$bin" >> "$GITHUB_PATH"
+        else
+          echo "no prebuilt binary for $RUNNER_OS-$RUNNER_ARCH, building from source"
+          cargo install --git https://github.com/majiayu000/rust1100-check --tag "v$VERSION" --locked
+        fi
     - name: Run rust1100-check
       shell: bash
       env:
         SCAN_PATH: ${{ inputs.path }}
-        EXTRA_ARGS: ${{ inputs.args }}
-      # EXTRA_ARGS is split by the shell on purpose so several flags can be passed.
-      run: eval "cargo rust1100-check \"\$SCAN_PATH\" --format github $EXTRA_ARGS"
+        MIN_PUBLISH_AGE: ${{ inputs.min-publish-age }}
+        FAIL_ON: ${{ inputs.fail-on }}
+      run: |
+        args=("$SCAN_PATH" --format github --fail-on "$FAIL_ON")
+        if [ -n "$MIN_PUBLISH_AGE" ]; then args+=(--min-publish-age "$MIN_PUBLISH_AGE"); fi
+        cargo-rust1100-check "${args[@]}"

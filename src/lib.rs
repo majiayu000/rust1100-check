@@ -80,6 +80,33 @@ pub const RULES: &[Rule] = &[
     },
 ];
 
+/// A finding is dropped when this text appears on its line or the line above.
+pub const IGNORE_MARKER: &str = "rust1100-check: ignore";
+
+/// Quote every unquoted version reported by the YAML rules, in place. Returns how many
+/// values were quoted.
+pub fn fix_yaml(root: &Path, findings: &[Finding]) -> Result<usize, String> {
+    let mut by_file: std::collections::BTreeMap<&str, Vec<(usize, usize)>> = Default::default();
+    for f in findings
+        .iter()
+        .filter(|f| f.rule == yaml::TRUNCATED || f.rule == yaml::FRAGILE)
+    {
+        by_file.entry(&f.file).or_default().push((f.line, f.column));
+    }
+    let mut total = 0;
+    for (file, positions) in by_file {
+        let path = root.join(file);
+        let text = std::fs::read_to_string(&path)
+            .map_err(|e| format!("reading {}: {e}", path.display()))?;
+        let (fixed, n) = yaml::quote_versions(&text, &positions);
+        if n > 0 {
+            std::fs::write(&path, fixed).map_err(|e| format!("writing {}: {e}", path.display()))?;
+            total += n;
+        }
+    }
+    Ok(total)
+}
+
 pub enum FileKind {
     CiYaml,
     Script,
@@ -142,10 +169,19 @@ pub fn scan_static(root: &Path) -> Result<(Vec<Finding>, usize), String> {
             continue;
         };
         files += 1;
+        let mut found = Vec::new();
         match kind {
-            FileKind::CiYaml => yaml::check(&rel, &text, &mut findings),
-            FileKind::Script => script::check(&rel, &text, 0, &mut findings),
+            FileKind::CiYaml => yaml::check(&rel, &text, &mut found),
+            FileKind::Script => script::check(&rel, &text, 0, &mut found),
         }
+        let lines: Vec<&str> = text.lines().collect();
+        let ignored = |line: usize| {
+            [line.checked_sub(1), line.checked_sub(2)]
+                .into_iter()
+                .flatten()
+                .any(|i| lines.get(i).is_some_and(|l| l.contains(IGNORE_MARKER)))
+        };
+        findings.extend(found.into_iter().filter(|f| !ignored(f.line)));
     }
     findings.sort_by(|a, b| (&a.file, a.line, a.column).cmp(&(&b.file, b.line, b.column)));
     Ok((findings, files))

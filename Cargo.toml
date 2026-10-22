@@ -3,11 +3,13 @@ name = "rust1100-check"
 version = "0.1.0"
 edition = "2024"
 rust-version = "1.88"
-description = "Find where your CI, scripts and dependencies break on Rust 1.100, and preview Cargo's min-publish-age cooldown"
-license = "MIT OR Apache-2.0"
+description = "Check a Rust repo's CI YAML, rust-toolchain inputs, MSRV scripts and Cargo.lock for Rust 1.100 breakage: unquoted 1.100 read as 1.1, string version compares, new beta lints, and a Cargo min-publish-age cooldown preview"
+license = "MIT"
 repository = "https://github.com/majiayu000/rust1100-check"
-keywords = ["cargo", "ci", "msrv", "yaml", "lint"]
-categories = ["development-tools::cargo-plugins", "command-line-utilities"]
+readme = "README.md"
+keywords = ["rust-1100", "msrv", "ci", "github-actions", "cooldown"]
+categories = ["development-tools::cargo-plugins", "command-line-utilities", "development-tools"]
+exclude = ["examples/real-repos/", "docs/social-preview.png"]
 
 [[bin]]
 name = "cargo-rust1100-check"

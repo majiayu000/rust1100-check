@@ -1,18 +1,23 @@
 # rust1100-check
 
-Find where your CI, scripts and dependencies break on Rust 1.100 (due 2026-11-12), and preview what Cargo's new `min-publish-age` cooldown would hold back.
+[![CI](https://github.com/majiayu000/rust1100-check/actions/workflows/ci.yml/badge.svg)](https://github.com/majiayu000/rust1100-check/actions/workflows/ci.yml)
+[![Release](https://img.shields.io/github/v/release/majiayu000/rust1100-check)](https://github.com/majiayu000/rust1100-check/releases)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![MSRV 1.88](https://img.shields.io/badge/MSRV-1.88-orange.svg)](Cargo.toml)
 
-Rust 1.100 is the first release with a three-digit minor version. Unquoted in YAML, `1.100` is the number 1.1, and rustup will install Rust 1.1.0 from 2015 on a Linux runner. The same thing already happens today to `1.70`, `1.80` and `1.90` (loaded as 1.7, 1.8, 1.9). Shell scripts that compare versions as strings put `1.100` before `1.99`. The release also stabilizes Cargo lints, the never type fallback change, and `registry.global-min-publish-age`.
+**Rust 1.100 readiness check for your CI:** finds unquoted versions in GitHub Actions / GitLab CI YAML that `rust-toolchain` setups read as Rust 1.1, MSRV scripts that compare `rustc --version` as strings, new lints on the 1.100 beta, and previews which `Cargo.lock` dependencies Cargo's new `min-publish-age` cooldown would hold back.
 
-`cargo rust1100-check` is a read-only scan: it never edits your files.
+Rust 1.100 (2026-11-12) is the first release with a three-digit minor version. Unquoted in YAML, `1.100` is the number 1.1, and rustup installs Rust 1.1.0 from 2015 on a Linux runner. The same thing already happens to `1.70`, `1.80` and `1.90` (read as 1.7, 1.8, 1.9). Scripts that compare versions as strings put `1.100` before `1.99`. The release also stabilizes Cargo lints, changes never-type fallback, and adds `registry.global-min-publish-age`.
+
+`cargo rust1100-check` is read-only unless you pass `--fix`.
 
 ## Install
+
+Prebuilt binaries for Linux x86_64 and macOS (arm64, x86_64) are on the [Releases page](https://github.com/majiayu000/rust1100-check/releases). Or build it (Rust 1.88+):
 
 ```bash
 cargo install --git https://github.com/majiayu000/rust1100-check --locked
 ```
-
-(Not on crates.io yet. Needs Rust 1.88 or newer to build.)
 
 ## Usage
 
@@ -20,7 +25,9 @@ cargo install --git https://github.com/majiayu000/rust1100-check --locked
 cargo rust1100-check
 ```
 
-Optional checks:
+```bash
+cargo rust1100-check --fix
+```
 
 ```bash
 cargo rust1100-check --min-publish-age "7 days"
@@ -33,12 +40,28 @@ cargo rust1100-check --beta-diff
 | Flag | What it does |
 |---|---|
 | `[PATH]` | Repository root, default `.` |
+| `--fix` | Quote the flagged YAML versions in place (`1.90` → `"1.90"`), then report what is left |
 | `--format text\|json\|github\|sarif` | Output format, default `text`. `github` prints workflow annotations |
 | `--min-publish-age "<N> days"` | Preview Cargo's cooldown against `Cargo.lock` (reads `pubtime` from the crates.io sparse index) |
 | `--beta-diff` | Run `cargo check` with `--baseline` (default `stable`) and with `beta`, report diagnostics only beta emits. Until Nov 12, beta is 1.100 |
 | `--fail-on error\|warning\|note\|never` | Lowest severity that sets exit code 1, default `error` |
 
+To silence one finding, put `rust1100-check: ignore` in a comment on the same line or the line above.
+
 Exit codes: `0` nothing at or above `--fail-on`, `1` findings, `2` the tool itself failed (bad arguments, network error, missing toolchain).
+
+## How it compares
+
+| | rust1100-check | actionlint | zizmor | yamllint | dtolnay/rust-toolchain |
+|---|---|---|---|---|---|
+| Unquoted version read as a float (`1.100` → 1.1) | ✅ | — | — | ⚠️ quotes everything | ⚠️ fixes its own `toolchain` input only |
+| Knows when dtolnay/rust-toolchain already handles it | ✅ | — | — | — | — |
+| GitLab CI, CircleCI, Travis, compose | ✅ | — | — | ✅ | — |
+| Version compared as string in scripts | ✅ | — | — | — | — |
+| stable vs 1.100 beta diagnostics | ✅ | — | — | — | — |
+| Cargo `min-publish-age` cooldown preview | ✅ | — | — | — | — |
+
+Use it next to actionlint and zizmor, not instead of them. Full table with cargo-msrv, cargo-deny and the cooldown tools: [docs/comparison.md](docs/comparison.md).
 
 ## Example output
 
@@ -106,16 +129,18 @@ Cargo 1.100 ignores versions whose index `pubtime` is newer than `global-min-pub
 - uses: actions/checkout@v4
 - uses: majiayu000/rust1100-check@v0.1.0
   with:
-    args: --min-publish-age "7 days"
+    min-publish-age: "7 days"   # optional
+    fail-on: error              # default
 ```
 
-The action installs the crate with `cargo install --locked` and runs it with `--format github`, so findings show up as annotations on the PR. For code scanning, run `cargo rust1100-check --format sarif > rust1100.sarif` and upload it with `github/codeql-action/upload-sarif`.
+The action downloads the release binary for the runner (falls back to `cargo install --git` on other platforms) and runs it with `--format github`, so findings show up as annotations on the PR. For code scanning, run `cargo rust1100-check --format sarif > rust1100.sarif` and upload it with `github/codeql-action/upload-sarif`.
 
 ## Docs
 
 - [docs/research.md](docs/research.md): what changes in 1.100, how CI actions handle the version input, competing tools
 - [docs/design.md](docs/design.md): rules, false-positive controls, output formats
+- [docs/comparison.md](docs/comparison.md): feature comparison with adjacent tools
 
 ## License
 
-MIT OR Apache-2.0
+[MIT](LICENSE)

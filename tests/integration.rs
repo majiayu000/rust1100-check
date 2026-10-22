@@ -178,3 +178,31 @@ fn cooldown_reports_missing_index_data() {
     let err = cooldown::preview(&lock, &[], &HashMap::new(), "7 days", now).unwrap_err();
     assert!(err.contains("no index data"), "{err}");
 }
+
+#[test]
+fn inline_ignore_on_same_or_previous_line() {
+    assert_eq!(
+        scan("ignored"),
+        vec![hit(".github/workflows/ci.yml", 6, TRUNC, Severity::Error)]
+    );
+}
+
+#[test]
+fn fix_quotes_versions_in_place() {
+    let src = Path::new(env!("CARGO_MANIFEST_DIR")).join("tests/fixtures/actions-rs-matrix");
+    let dir = std::env::temp_dir().join(format!("rust1100-check-fix-{}", std::process::id()));
+    let wf = dir.join(".github/workflows");
+    std::fs::create_dir_all(&wf).unwrap();
+    std::fs::copy(src.join(".github/workflows/CI.yml"), wf.join("CI.yml")).unwrap();
+
+    let (findings, _) = scan_static(&dir).unwrap();
+    assert_eq!(rust1100_check::fix_yaml(&dir, &findings).unwrap(), 5);
+    let text = std::fs::read_to_string(wf.join("CI.yml")).unwrap();
+    assert!(text.contains("toolchain: \"1.88\""), "{text}");
+    assert!(
+        text.contains("rust: [\"1.93\", \"1.94\", \"1.95\", \"1.96\"]"),
+        "{text}"
+    );
+    assert!(scan_static(&dir).unwrap().0.is_empty());
+    std::fs::remove_dir_all(&dir).unwrap();
+}

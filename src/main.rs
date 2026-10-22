@@ -3,7 +3,7 @@ use std::process::ExitCode;
 
 use clap::{Parser, ValueEnum};
 use rust1100_check::report::{self, Report};
-use rust1100_check::{Severity, beta, cooldown, scan_static};
+use rust1100_check::{Severity, beta, cooldown, fix_yaml, scan_static};
 
 #[derive(Parser)]
 #[command(name = "cargo", bin_name = "cargo")]
@@ -25,6 +25,9 @@ struct Args {
     /// Run `cargo check` with the baseline toolchain and beta, and report diagnostics only beta emits
     #[arg(long)]
     beta_diff: bool,
+    /// Quote the unquoted YAML versions in place, then report what is left
+    #[arg(long)]
+    fix: bool,
     /// Toolchain that `--beta-diff` compares against
     #[arg(long, value_name = "TOOLCHAIN", default_value = "stable")]
     baseline: String,
@@ -54,7 +57,12 @@ fn run(args: Args) -> Result<bool, String> {
     if !root.is_dir() {
         return Err(format!("{} is not a directory", root.display()));
     }
-    let (mut findings, files_scanned) = scan_static(&root)?;
+    let (mut findings, mut files_scanned) = scan_static(&root)?;
+    if args.fix {
+        let fixed = fix_yaml(&root, &findings)?;
+        eprintln!("quoted {fixed} YAML version value(s)");
+        (findings, files_scanned) = scan_static(&root)?;
+    }
     let mut cooldown_summary = None;
     if let Some(age) = &args.min_publish_age {
         let (found, summary) = cooldown::run(&root, age)?;

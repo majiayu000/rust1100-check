@@ -6,8 +6,9 @@
 
 - 默认只做离线静态检查（R1–R4），几秒内跑完，适合放进 CI。
 - 两个需要外部资源的检查按需开启：`--min-publish-age`（访问 crates.io sparse index，R5）、`--beta-diff`（需要本机装了 stable 与 beta，R6）。
-- 不改用户文件。每条发现都带具体的修复写法。
-- 非目标（v0.1 不做）：自动修复/生成补丁、GitLab/CircleCI 专用的 consumer 分析、完整的依赖重解析。
+- 默认不改用户文件，每条发现都带具体的修复写法。`--fix` 只给 R1/R2 命中的那个 YAML 标量加引号，其余字节不动，修完重新扫描再报告。
+- 单条忽略：发现所在行或上一行含 `rust1100-check: ignore` 即丢弃（适用于 R0–R4）。
+- 非目标（v0.1 不做）：脚本类规则的自动修复、GitLab/CircleCI 专用的 consumer 分析、完整的依赖重解析。
 
 ## 扫描范围
 
@@ -99,8 +100,8 @@
 
 仓库根目录 `action.yml`，composite action：
 
-1. `cargo install rust1100-check --locked --version <input.version>`；
-2. `cargo rust1100-check <path> --format github` 加上用户给的 `args`（如 `--min-publish-age "7 days"`）。
+1. 按 `RUNNER_OS`/`RUNNER_ARCH` 从 GitHub Release 下载 `cargo-rust1100-check-<target>.tar.gz`（Linux x86_64、macOS arm64/x86_64）；没有匹配平台时 `cargo install --git … --tag v<version>`。不依赖 crates.io。
+2. 用 bash 数组拼参数运行 `--format github`，输入 `path`、`min-publish-age`、`fail-on` 分开传，不用 `eval`。
 
 需要 SARIF 时用户自行加 `--format sarif > out.sarif` 再接 `upload-sarif`，README 给示例。
 

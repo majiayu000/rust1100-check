@@ -1,0 +1,11 @@
+on: [push]
+env:
+  OLD_MSRV: 1.70 # rust1100-check: ignore
+  # rust1100-check: ignore
+  LEGACY_TOOLCHAIN: 1.80
+  RUST_VERSION: 1.90
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - run: rustup toolchain install $OLD_MSRV $LEGACY_TOOLCHAIN $RUST_VERSION

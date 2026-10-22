@@ -372,6 +372,35 @@ pub fn check(file: &str, text: &str, out: &mut Vec<Finding>) {
     }
 }
 
+/// Quote the unquoted version numbers reported by R1/R2 in one file. `positions` are the
+/// (line, column) pairs of those findings, 1-based, column counted in characters.
+/// Returns the new text and how many values were quoted.
+pub fn quote_versions(text: &str, positions: &[(usize, usize)]) -> (String, usize) {
+    let mut lines: Vec<String> = text.split('\n').map(str::to_owned).collect();
+    let mut sorted = positions.to_vec();
+    // Right to left, so earlier columns on the same line stay valid.
+    sorted.sort_by(|a, b| b.cmp(a));
+    sorted.dedup();
+    let mut fixed = 0;
+    for (line, col) in sorted {
+        let Some(l) = lines.get_mut(line - 1) else {
+            continue;
+        };
+        let Some((start, _)) = l.char_indices().nth(col - 1) else {
+            continue;
+        };
+        let len = l[start..]
+            .find(|c: char| !c.is_ascii_digit() && c != '.')
+            .unwrap_or(l.len() - start);
+        let value = &l[start..start + len];
+        if FLOAT_TRAILING_ZERO.is_match(value) || RUST_TWO_PART.is_match(value) {
+            *l = format!("{}\"{value}\"{}", &l[..start], &l[start + len..]);
+            fixed += 1;
+        }
+    }
+    (lines.join("\n"), fixed)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -447,6 +476,23 @@ jobs:
       - run: cargo +$MSRV check
 "#;
         assert_eq!(rules(text), vec![(TRUNCATED, Severity::Error, 4)]);
+    }
+
+    #[test]
+    fn quote_versions_rewrites_only_reported_values() {
+        let text = "rust: [1.90, 1.95, stable] # 1.90\ntoolchain: 1.100\nother: 1.5\n";
+        let mut out = Vec::new();
+        check("ci.yml", text, &mut out);
+        let positions: Vec<_> = out.iter().map(|f| (f.line, f.column)).collect();
+        let (fixed, n) = quote_versions(text, &positions);
+        assert_eq!(n, 3);
+        assert_eq!(
+            fixed,
+            "rust: [\"1.90\", \"1.95\", stable] # 1.90\ntoolchain: \"1.100\"\nother: 1.5\n"
+        );
+        let mut again = Vec::new();
+        check("ci.yml", &fixed, &mut again);
+        assert!(again.is_empty());
     }
 
     #[test]
