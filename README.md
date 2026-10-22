@@ -126,7 +126,7 @@ Cargo 1.100 ignores versions whose index `pubtime` is newer than `global-min-pub
 ## GitHub Action
 
 ```yaml
-- uses: actions/checkout@v4
+- uses: actions/checkout@v7
 - uses: majiayu000/rust1100-check@v0.1.0
   with:
     min-publish-age: "7 days"   # optional
