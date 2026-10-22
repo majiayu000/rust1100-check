@@ -1,0 +1,92 @@
+{
+  "cooldown": {
+    "min_publish_age": "7 days",
+    "other_sources": 0,
+    "registry_packages": 87,
+    "unsatisfiable": 0,
+    "young": 7
+  },
+  "files_scanned": 1,
+  "findings": [
+    {
+      "column": 22,
+      "file": ".github/workflows/ci.yml",
+      "help": "quote it: `toolchain: \"1.70\"`, or use a full version such as `1.70.0`",
+      "line": 20,
+      "message": "`toolchain: 1.70` is an unquoted YAML number and is loaded as 1.7; rustup would install Rust 1.7.0",
+      "rule": "yaml-float-version-truncated",
+      "severity": "error"
+    },
+    {
+      "column": 1,
+      "file": "Cargo.lock",
+      "help": "no action needed; to take the newest version anyway: CARGO_RESOLVER_INCOMPATIBLE_PUBLISH_AGE=allow cargo update -p cc",
+      "line": 30,
+      "message": "cc 1.9.0 was published 2 days ago (2026-10-19); with min-publish-age \"7 days\" it stays because it is locked, but `cargo update` or a fresh resolve would pick 1.8.0",
+      "rule": "cooldown-young-locked",
+      "severity": "note"
+    },
+    {
+      "column": 1,
+      "file": "Cargo.lock",
+      "help": "no action needed; to take the newest version anyway: CARGO_RESOLVER_INCOMPATIBLE_PUBLISH_AGE=allow cargo update -p find-msvc-tools",
+      "line": 62,
+      "message": "find-msvc-tools 0.1.15 was published 2 days ago (2026-10-19); with min-publish-age \"7 days\" it stays because it is locked, but `cargo update` or a fresh resolve would pick 0.1.14",
+      "rule": "cooldown-young-locked",
+      "severity": "note"
+    },
+    {
+      "column": 1,
+      "file": "Cargo.lock",
+      "help": "no action needed; to take the newest version anyway: CARGO_RESOLVER_INCOMPATIBLE_PUBLISH_AGE=allow cargo update -p libc",
+      "line": 132,
+      "message": "libc 0.2.191 was published 5 days ago (2026-10-16); with min-publish-age \"7 days\" it stays because it is locked, but `cargo update` or a fresh resolve would pick 0.2.190",
+      "rule": "cooldown-young-locked",
+      "severity": "note"
+    },
+    {
+      "column": 1,
+      "file": "Cargo.lock",
+      "help": "no action needed; to take the newest version anyway: CARGO_RESOLVER_INCOMPATIBLE_PUBLISH_AGE=allow cargo update -p redox_syscall",
+      "line": 224,
+      "message": "redox_syscall 0.9.5 was published 4 days ago (2026-10-17); with min-publish-age \"7 days\" it stays because it is locked, but `cargo update` or a fresh resolve would pick 0.9.4",
+      "rule": "cooldown-young-locked",
+      "severity": "note"
+    },
+    {
+      "column": 1,
+      "file": "Cargo.lock",
+      "help": "no action needed; to take the newest version anyway: CARGO_RESOLVER_INCOMPATIBLE_PUBLISH_AGE=allow cargo update -p rustls-webpki",
+      "line": 292,
+      "message": "rustls-webpki 0.103.16 was published 43 hours ago (2026-10-20); with min-publish-age \"7 days\" it stays because it is locked, but `cargo update` or a fresh resolve would pick 0.103.15",
+      "rule": "cooldown-young-locked",
+      "severity": "note"
+    },
+    {
+      "column": 1,
+      "file": "Cargo.lock",
+      "help": "no action needed; to take the newest version anyway: CARGO_RESOLVER_INCOMPATIBLE_PUBLISH_AGE=allow cargo update -p schannel",
+      "line": 309,
+      "message": "schannel 0.1.30 was published 5 days ago (2026-10-16); with min-publish-age \"7 days\" it stays because it is locked, but `cargo update` or a fresh resolve would pick 0.1.29",
+      "rule": "cooldown-young-locked",
+      "severity": "note"
+    },
+    {
+      "column": 1,
+      "file": "Cargo.lock",
+      "help": "no action needed; to take the newest version anyway: CARGO_RESOLVER_INCOMPATIBLE_PUBLISH_AGE=allow cargo update -p tokio",
+      "line": 457,
+      "message": "tokio 1.54.1 was published 7 hours ago (2026-10-21); with min-publish-age \"7 days\" it stays because it is locked, but `cargo update` or a fresh resolve would pick 1.53.3",
+      "rule": "cooldown-young-locked",
+      "severity": "note"
+    }
+  ],
+  "summary": {
+    "error": 1,
+    "note": 7,
+    "warning": 0
+  },
+  "tool": "rust1100-check",
+  "toolchains": null,
+  "version": "0.1.0"
+}

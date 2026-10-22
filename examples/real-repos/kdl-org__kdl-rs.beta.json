@@ -1,0 +1,26 @@
+{
+  "cooldown": null,
+  "files_scanned": 3,
+  "findings": [
+    {
+      "column": 16,
+      "file": ".github/workflows/ci.yml",
+      "help": "quote it: `rust: \"1.95\"`, or use a full version such as `1.95.0`",
+      "line": 31,
+      "message": "`rust: 1.95` is an unquoted YAML number; it works today, but bumping it to 1.100 loads as 1.1 and installs Rust 1.1.0",
+      "rule": "yaml-float-rust-version",
+      "severity": "warning"
+    }
+  ],
+  "summary": {
+    "error": 0,
+    "note": 0,
+    "warning": 1
+  },
+  "tool": "rust1100-check",
+  "toolchains": {
+    "beta": "rustc 1.100.0-beta.7 (fd8e211ae 2026-10-17)",
+    "stable": "rustc 1.99.0 (b940084d7 2026-09-28)"
+  },
+  "version": "0.1.0"
+}

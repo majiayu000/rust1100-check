@@ -1,0 +1,29 @@
+{
+  "cooldown": {
+    "min_publish_age": "7 days",
+    "other_sources": 0,
+    "registry_packages": 44,
+    "unsatisfiable": 0,
+    "young": 1
+  },
+  "files_scanned": 7,
+  "findings": [
+    {
+      "column": 1,
+      "file": "Cargo.lock",
+      "help": "no action needed; to take the newest version anyway: CARGO_RESOLVER_INCOMPATIBLE_PUBLISH_AGE=allow cargo update -p libc",
+      "line": 127,
+      "message": "libc 0.2.191 was published 5 days ago (2026-10-16); with min-publish-age \"7 days\" it stays because it is locked, but `cargo update` or a fresh resolve would pick 0.2.190",
+      "rule": "cooldown-young-locked",
+      "severity": "note"
+    }
+  ],
+  "summary": {
+    "error": 0,
+    "note": 1,
+    "warning": 0
+  },
+  "tool": "rust1100-check",
+  "toolchains": null,
+  "version": "0.1.0"
+}

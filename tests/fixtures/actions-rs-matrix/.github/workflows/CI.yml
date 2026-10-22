@@ -1,0 +1,23 @@
+# Minimized from SolarLiner/interflow .github/workflows/CI.yml
+on: [push]
+jobs:
+  rustfmt:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Install Rust 1.88
+      uses: actions-rs/toolchain@v1
+      with:
+        toolchain: 1.88
+        components: rustfmt
+  test:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+        rust: [1.93, 1.94, 1.95, 1.96]
+    runs-on: ${{ matrix.os }}
+    steps:
+    - name: Install Rust ${{ matrix.rust }}
+      uses: actions-rs/toolchain@v1
+      with:
+        toolchain: ${{ matrix.rust }}
+    - run: cargo test --verbose

@@ -1,0 +1,83 @@
+{
+  "cooldown": {
+    "min_publish_age": "7 days",
+    "other_sources": 0,
+    "registry_packages": 147,
+    "unsatisfiable": 0,
+    "young": 0
+  },
+  "files_scanned": 5,
+  "findings": [
+    {
+      "column": 20,
+      "file": ".github/workflows/CI.yml",
+      "help": "quote it: `toolchain: \"1.88\"`, or use a full version such as `1.88.0`",
+      "line": 22,
+      "message": "`toolchain: 1.88` is an unquoted YAML number; it works today, but bumping it to 1.100 loads as 1.1 and installs Rust 1.1.0",
+      "rule": "yaml-float-rust-version",
+      "severity": "warning"
+    },
+    {
+      "column": 22,
+      "file": ".github/workflows/CI.yml",
+      "help": "quote it: `toolchain: \"1.96\"`, or use a full version such as `1.96.0`",
+      "line": 41,
+      "message": "`toolchain: 1.96` is an unquoted YAML number; it works today, but bumping it to 1.100 loads as 1.1 and installs Rust 1.1.0",
+      "rule": "yaml-float-rust-version",
+      "severity": "warning"
+    },
+    {
+      "column": 16,
+      "file": ".github/workflows/CI.yml",
+      "help": "quote it: `rust: \"1.93\"`, or use a full version such as `1.93.0`",
+      "line": 55,
+      "message": "`rust: 1.93` is an unquoted YAML number; it works today, but bumping it to 1.100 loads as 1.1 and installs Rust 1.1.0",
+      "rule": "yaml-float-rust-version",
+      "severity": "warning"
+    },
+    {
+      "column": 22,
+      "file": ".github/workflows/CI.yml",
+      "help": "quote it: `rust: \"1.94\"`, or use a full version such as `1.94.0`",
+      "line": 55,
+      "message": "`rust: 1.94` is an unquoted YAML number; it works today, but bumping it to 1.100 loads as 1.1 and installs Rust 1.1.0",
+      "rule": "yaml-float-rust-version",
+      "severity": "warning"
+    },
+    {
+      "column": 28,
+      "file": ".github/workflows/CI.yml",
+      "help": "quote it: `rust: \"1.95\"`, or use a full version such as `1.95.0`",
+      "line": 55,
+      "message": "`rust: 1.95` is an unquoted YAML number; it works today, but bumping it to 1.100 loads as 1.1 and installs Rust 1.1.0",
+      "rule": "yaml-float-rust-version",
+      "severity": "warning"
+    },
+    {
+      "column": 34,
+      "file": ".github/workflows/CI.yml",
+      "help": "quote it: `rust: \"1.96\"`, or use a full version such as `1.96.0`",
+      "line": 55,
+      "message": "`rust: 1.96` is an unquoted YAML number; it works today, but bumping it to 1.100 loads as 1.1 and installs Rust 1.1.0",
+      "rule": "yaml-float-rust-version",
+      "severity": "warning"
+    },
+    {
+      "column": 22,
+      "file": ".github/workflows/documentation.yml",
+      "help": "quote it: `toolchain: \"1.96\"`, or use a full version such as `1.96.0`",
+      "line": 35,
+      "message": "`toolchain: 1.96` is an unquoted YAML number; it works today, but bumping it to 1.100 loads as 1.1 and installs Rust 1.1.0",
+      "rule": "yaml-float-rust-version",
+      "severity": "warning"
+    }
+  ],
+  "summary": {
+    "error": 0,
+    "note": 0,
+    "warning": 7
+  },
+  "tool": "rust1100-check",
+  "toolchains": null,
+  "version": "0.1.0"
+}

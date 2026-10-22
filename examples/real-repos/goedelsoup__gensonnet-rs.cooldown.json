@@ -1,0 +1,200 @@
+{
+  "cooldown": {
+    "min_publish_age": "7 days",
+    "other_sources": 0,
+    "registry_packages": 460,
+    "unsatisfiable": 0,
+    "young": 18
+  },
+  "files_scanned": 12,
+  "findings": [
+    {
+      "column": 16,
+      "file": ".github/workflows/ci.yml",
+      "help": "quote it: `rust: \"1.70\"`, or use a full version such as `1.70.0`",
+      "line": 18,
+      "message": "`rust: 1.70` is an unquoted YAML number and is loaded as 1.7; dtolnay/rust-toolchain restores the zero for its `toolchain` input, but anything else reading this value sees the truncated number",
+      "rule": "yaml-float-version-truncated",
+      "severity": "note"
+    },
+    {
+      "column": 19,
+      "file": ".github/workflows/ci.yml",
+      "help": "quote it: `rust: \"1.70\"`, or use a full version such as `1.70.0`",
+      "line": 20,
+      "message": "`rust: 1.70` is an unquoted YAML number and is loaded as 1.7; dtolnay/rust-toolchain restores the zero for its `toolchain` input, but anything else reading this value sees the truncated number",
+      "rule": "yaml-float-version-truncated",
+      "severity": "note"
+    },
+    {
+      "column": 1,
+      "file": "Cargo.lock",
+      "help": "no action needed; to take the newest version anyway: CARGO_RESOLVER_INCOMPATIBLE_PUBLISH_AGE=allow cargo update -p arc-swap",
+      "line": 152,
+      "message": "arc-swap 1.9.3 was published 3 days ago (2026-10-18); with min-publish-age \"7 days\" it stays because it is locked, but `cargo update` or a fresh resolve would pick 1.9.2",
+      "rule": "cooldown-young-locked",
+      "severity": "note"
+    },
+    {
+      "column": 1,
+      "file": "Cargo.lock",
+      "help": "no action needed; to take the newest version anyway: CARGO_RESOLVER_INCOMPATIBLE_PUBLISH_AGE=allow cargo update -p async-compression",
+      "line": 181,
+      "message": "async-compression 0.4.51 was published 4 days ago (2026-10-17); with min-publish-age \"7 days\" it stays because it is locked, but `cargo update` or a fresh resolve would pick 0.4.50",
+      "rule": "cooldown-young-locked",
+      "severity": "note"
+    },
+    {
+      "column": 1,
+      "file": "Cargo.lock",
+      "help": "no action needed; to take the newest version anyway: CARGO_RESOLVER_INCOMPATIBLE_PUBLISH_AGE=allow cargo update -p cc",
+      "line": 391,
+      "message": "cc 1.9.0 was published 2 days ago (2026-10-19); with min-publish-age \"7 days\" it stays because it is locked, but `cargo update` or a fresh resolve would pick 1.8.0",
+      "rule": "cooldown-young-locked",
+      "severity": "note"
+    },
+    {
+      "column": 1,
+      "file": "Cargo.lock",
+      "help": "no action needed; to take the newest version anyway: CARGO_RESOLVER_INCOMPATIBLE_PUBLISH_AGE=allow cargo update -p compression-codecs",
+      "line": 508,
+      "message": "compression-codecs 0.4.46 was published 4 days ago (2026-10-17); with min-publish-age \"7 days\" it stays because it is locked, but `cargo update` or a fresh resolve would pick 0.4.45",
+      "rule": "cooldown-young-locked",
+      "severity": "note"
+    },
+    {
+      "column": 1,
+      "file": "Cargo.lock",
+      "help": "no action needed; to take the newest version anyway: CARGO_RESOLVER_INCOMPATIBLE_PUBLISH_AGE=allow cargo update -p compression-core",
+      "line": 519,
+      "message": "compression-core 0.4.34 was published 4 days ago (2026-10-17); with min-publish-age \"7 days\" it stays because it is locked, but `cargo update` or a fresh resolve would pick 0.4.33",
+      "rule": "cooldown-young-locked",
+      "severity": "note"
+    },
+    {
+      "column": 1,
+      "file": "Cargo.lock",
+      "help": "no action needed; to take the newest version anyway: CARGO_RESOLVER_INCOMPATIBLE_PUBLISH_AGE=allow cargo update -p crc32fast",
+      "line": 575,
+      "message": "crc32fast 1.5.3 was published 39 hours ago (2026-10-20); with min-publish-age \"7 days\" it stays because it is locked, but `cargo update` or a fresh resolve would pick 1.5.2",
+      "rule": "cooldown-young-locked",
+      "severity": "note"
+    },
+    {
+      "column": 1,
+      "file": "Cargo.lock",
+      "help": "no action needed; to take the newest version anyway: CARGO_RESOLVER_INCOMPATIBLE_PUBLISH_AGE=allow cargo update -p defmt",
+      "line": 637,
+      "message": "defmt 0.3.101 was published 6 days ago (2026-10-15); with min-publish-age \"7 days\" it stays because it is locked, but `cargo update` or a fresh resolve would pick 0.3.100",
+      "rule": "cooldown-young-locked",
+      "severity": "note"
+    },
+    {
+      "column": 1,
+      "file": "Cargo.lock",
+      "help": "no action needed; to take the newest version anyway: CARGO_RESOLVER_INCOMPATIBLE_PUBLISH_AGE=allow cargo update -p defmt",
+      "line": 646,
+      "message": "defmt 1.2.0 was published 6 days ago (2026-10-15); with min-publish-age \"7 days\" it stays because it is locked, but `cargo update` or a fresh resolve would pick 1.1.1",
+      "rule": "cooldown-young-locked",
+      "severity": "note"
+    },
+    {
+      "column": 1,
+      "file": "Cargo.lock",
+      "help": "no action needed; to take the newest version anyway: CARGO_RESOLVER_INCOMPATIBLE_PUBLISH_AGE=allow cargo update -p defmt-macros",
+      "line": 656,
+      "message": "defmt-macros 1.2.0 was published 6 days ago (2026-10-15); with min-publish-age \"7 days\" it stays because it is locked, but `cargo update` or a fresh resolve would pick 1.1.1",
+      "rule": "cooldown-young-locked",
+      "severity": "note"
+    },
+    {
+      "column": 1,
+      "file": "Cargo.lock",
+      "help": "no action needed; to take the newest version anyway: CARGO_RESOLVER_INCOMPATIBLE_PUBLISH_AGE=allow cargo update -p defmt-parser",
+      "line": 668,
+      "message": "defmt-parser 1.1.0 was published 6 days ago (2026-10-15); with min-publish-age \"7 days\" it stays because it is locked, but `cargo update` or a fresh resolve would pick 1.0.0",
+      "rule": "cooldown-young-locked",
+      "severity": "note"
+    },
+    {
+      "column": 1,
+      "file": "Cargo.lock",
+      "help": "no action needed; to take the newest version anyway: CARGO_RESOLVER_INCOMPATIBLE_PUBLISH_AGE=allow cargo update -p find-msvc-tools",
+      "line": 842,
+      "message": "find-msvc-tools 0.1.15 was published 2 days ago (2026-10-19); with min-publish-age \"7 days\" it stays because it is locked, but `cargo update` or a fresh resolve would pick 0.1.14",
+      "rule": "cooldown-young-locked",
+      "severity": "note"
+    },
+    {
+      "column": 1,
+      "file": "Cargo.lock",
+      "help": "no action needed; to take the newest version anyway: CARGO_RESOLVER_INCOMPATIBLE_PUBLISH_AGE=allow cargo update -p libc",
+      "line": 2553,
+      "message": "libc 0.2.191 was published 5 days ago (2026-10-16); with min-publish-age \"7 days\" it stays because it is locked, but `cargo update` or a fresh resolve would pick 0.2.190",
+      "rule": "cooldown-young-locked",
+      "severity": "note"
+    },
+    {
+      "column": 1,
+      "file": "Cargo.lock",
+      "help": "no action needed; to take the newest version anyway: CARGO_RESOLVER_INCOMPATIBLE_PUBLISH_AGE=allow cargo update -p memmap2",
+      "line": 2667,
+      "message": "memmap2 0.9.12 was published 10 hours ago (2026-10-21); with min-publish-age \"7 days\" it stays because it is locked, but `cargo update` or a fresh resolve would pick 0.9.11",
+      "rule": "cooldown-young-locked",
+      "severity": "note"
+    },
+    {
+      "column": 1,
+      "file": "Cargo.lock",
+      "help": "no action needed; to take the newest version anyway: CARGO_RESOLVER_INCOMPATIBLE_PUBLISH_AGE=allow cargo update -p rustls-webpki",
+      "line": 3390,
+      "message": "rustls-webpki 0.103.16 was published 43 hours ago (2026-10-20); with min-publish-age \"7 days\" it stays because it is locked, but `cargo update` or a fresh resolve would pick 0.103.15",
+      "rule": "cooldown-young-locked",
+      "severity": "note"
+    },
+    {
+      "column": 1,
+      "file": "Cargo.lock",
+      "help": "no action needed; to take the newest version anyway: CARGO_RESOLVER_INCOMPATIBLE_PUBLISH_AGE=allow cargo update -p schannel",
+      "line": 3448,
+      "message": "schannel 0.1.30 was published 5 days ago (2026-10-16); with min-publish-age \"7 days\" it stays because it is locked, but `cargo update` or a fresh resolve would pick 0.1.29",
+      "rule": "cooldown-young-locked",
+      "severity": "note"
+    },
+    {
+      "column": 1,
+      "file": "Cargo.lock",
+      "help": "no action needed; to take the newest version anyway: CARGO_RESOLVER_INCOMPATIBLE_PUBLISH_AGE=allow cargo update -p smol_str",
+      "line": 3679,
+      "message": "smol_str 0.3.7 was published 38 hours ago (2026-10-20); with min-publish-age \"7 days\" it stays because it is locked, but `cargo update` or a fresh resolve would pick 0.3.6",
+      "rule": "cooldown-young-locked",
+      "severity": "note"
+    },
+    {
+      "column": 1,
+      "file": "Cargo.lock",
+      "help": "no action needed; to take the newest version anyway: CARGO_RESOLVER_INCOMPATIBLE_PUBLISH_AGE=allow cargo update -p tokio",
+      "line": 3995,
+      "message": "tokio 1.54.1 was published 7 hours ago (2026-10-21); with min-publish-age \"7 days\" it stays because it is locked, but `cargo update` or a fresh resolve would pick 1.53.3",
+      "rule": "cooldown-young-locked",
+      "severity": "note"
+    },
+    {
+      "column": 1,
+      "file": "Cargo.lock",
+      "help": "no action needed; to take the newest version anyway: CARGO_RESOLVER_INCOMPATIBLE_PUBLISH_AGE=allow cargo update -p unicode-normalization",
+      "line": 4283,
+      "message": "unicode-normalization 0.1.26 was published 5 days ago (2026-10-16); with min-publish-age \"7 days\" it stays because it is locked, but `cargo update` or a fresh resolve would pick 0.1.25",
+      "rule": "cooldown-young-locked",
+      "severity": "note"
+    }
+  ],
+  "summary": {
+    "error": 0,
+    "note": 20,
+    "warning": 0
+  },
+  "tool": "rust1100-check",
+  "toolchains": null,
+  "version": "0.1.0"
+}

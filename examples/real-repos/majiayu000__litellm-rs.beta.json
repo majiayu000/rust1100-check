@@ -1,0 +1,53 @@
+{
+  "cooldown": null,
+  "files_scanned": 60,
+  "findings": [
+    {
+      "column": 12,
+      "file": "Cargo.toml",
+      "help": "not reported by the baseline toolchain; see the 1.100 release notes: https://github.com/rust-lang/rust/issues/163811",
+      "line": 9,
+      "message": "new with rustc 1.100.0-beta.7 (fd8e211ae 2026-10-17): `package.homepage` is redundant with `package.repository`",
+      "rule": "beta-new-diagnostic",
+      "severity": "warning"
+    },
+    {
+      "column": 1,
+      "file": "Cargo.toml",
+      "help": "not reported by the baseline toolchain; see the 1.100 release notes: https://github.com/rust-lang/rust/issues/163811",
+      "line": 97,
+      "message": "new with rustc 1.100.0-beta.7 (fd8e211ae 2026-10-17): unused dependency `lru`",
+      "rule": "beta-new-diagnostic",
+      "severity": "warning"
+    },
+    {
+      "column": 1,
+      "file": "Cargo.toml",
+      "help": "not reported by the baseline toolchain; see the 1.100 release notes: https://github.com/rust-lang/rust/issues/163811",
+      "line": 132,
+      "message": "new with rustc 1.100.0-beta.7 (fd8e211ae 2026-10-17): unused dependency `dirs`",
+      "rule": "beta-new-diagnostic",
+      "severity": "warning"
+    },
+    {
+      "column": 1,
+      "file": "Cargo.toml",
+      "help": "not reported by the baseline toolchain; see the 1.100 release notes: https://github.com/rust-lang/rust/issues/163811",
+      "line": 137,
+      "message": "new with rustc 1.100.0-beta.7 (fd8e211ae 2026-10-17): unused dependency `sysinfo`",
+      "rule": "beta-new-diagnostic",
+      "severity": "warning"
+    }
+  ],
+  "summary": {
+    "error": 0,
+    "note": 0,
+    "warning": 4
+  },
+  "tool": "rust1100-check",
+  "toolchains": {
+    "beta": "rustc 1.100.0-beta.7 (fd8e211ae 2026-10-17)",
+    "stable": "rustc 1.99.0 (b940084d7 2026-09-28)"
+  },
+  "version": "0.1.0"
+}

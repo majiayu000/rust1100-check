@@ -1,0 +1,23 @@
+{
+  "cooldown": null,
+  "files_scanned": 3,
+  "findings": [
+    {
+      "column": 11,
+      "file": ".github/workflows/ci.yml",
+      "help": "quote it: `MSRV: \"1.85\"`, or use a full version such as `1.85.0`",
+      "line": 12,
+      "message": "`MSRV: 1.85` is an unquoted YAML number; it works today, but bumping it to 1.100 loads as 1.1 and installs Rust 1.1.0",
+      "rule": "yaml-float-rust-version",
+      "severity": "warning"
+    }
+  ],
+  "summary": {
+    "error": 0,
+    "note": 0,
+    "warning": 1
+  },
+  "tool": "rust1100-check",
+  "toolchains": null,
+  "version": "0.1.0"
+}

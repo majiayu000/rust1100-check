@@ -1,0 +1,8 @@
+variables:
+  RUST_VERSION: 1.100
+  PYTHON_VERSION: 3.10
+test:
+  image: "rust:$RUST_VERSION"
+  script:
+    - rustup default $RUST_VERSION
+    - cargo test

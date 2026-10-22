@@ -1,0 +1,74 @@
+{
+  "cooldown": {
+    "min_publish_age": "7 days",
+    "other_sources": 0,
+    "registry_packages": 118,
+    "unsatisfiable": 0,
+    "young": 6
+  },
+  "files_scanned": 2,
+  "findings": [
+    {
+      "column": 1,
+      "file": "Cargo.lock",
+      "help": "no action needed; to take the newest version anyway: CARGO_RESOLVER_INCOMPATIBLE_PUBLISH_AGE=allow cargo update -p arc-swap",
+      "line": 6,
+      "message": "arc-swap 1.9.3 was published 3 days ago (2026-10-18); with min-publish-age \"7 days\" it stays because it is locked, but `cargo update` or a fresh resolve would pick 1.9.2",
+      "rule": "cooldown-young-locked",
+      "severity": "note"
+    },
+    {
+      "column": 1,
+      "file": "Cargo.lock",
+      "help": "no action needed; to take the newest version anyway: CARGO_RESOLVER_INCOMPATIBLE_PUBLISH_AGE=allow cargo update -p cc",
+      "line": 143,
+      "message": "cc 1.9.0 was published 2 days ago (2026-10-19); with min-publish-age \"7 days\" it stays because it is locked, but `cargo update` or a fresh resolve would pick 1.8.0",
+      "rule": "cooldown-young-locked",
+      "severity": "note"
+    },
+    {
+      "column": 1,
+      "file": "Cargo.lock",
+      "help": "no action needed; to take the newest version anyway: CARGO_RESOLVER_INCOMPATIBLE_PUBLISH_AGE=allow cargo update -p find-msvc-tools",
+      "line": 198,
+      "message": "find-msvc-tools 0.1.15 was published 2 days ago (2026-10-19); with min-publish-age \"7 days\" it stays because it is locked, but `cargo update` or a fresh resolve would pick 0.1.14",
+      "rule": "cooldown-young-locked",
+      "severity": "note"
+    },
+    {
+      "column": 1,
+      "file": "Cargo.lock",
+      "help": "no action needed; to take the newest version anyway: CARGO_RESOLVER_INCOMPATIBLE_PUBLISH_AGE=allow cargo update -p libc",
+      "line": 455,
+      "message": "libc 0.2.191 was published 5 days ago (2026-10-16); with min-publish-age \"7 days\" it stays because it is locked, but `cargo update` or a fresh resolve would pick 0.2.190",
+      "rule": "cooldown-young-locked",
+      "severity": "note"
+    },
+    {
+      "column": 1,
+      "file": "Cargo.lock",
+      "help": "no action needed; to take the newest version anyway: CARGO_RESOLVER_INCOMPATIBLE_PUBLISH_AGE=allow cargo update -p rustls-webpki",
+      "line": 659,
+      "message": "rustls-webpki 0.103.16 was published 43 hours ago (2026-10-20); with min-publish-age \"7 days\" it stays because it is locked, but `cargo update` or a fresh resolve would pick 0.103.15",
+      "rule": "cooldown-young-locked",
+      "severity": "note"
+    },
+    {
+      "column": 1,
+      "file": "Cargo.lock",
+      "help": "no action needed; to take the newest version anyway: CARGO_RESOLVER_INCOMPATIBLE_PUBLISH_AGE=allow cargo update -p tokio",
+      "line": 851,
+      "message": "tokio 1.54.1 was published 7 hours ago (2026-10-21); with min-publish-age \"7 days\" it stays because it is locked, but `cargo update` or a fresh resolve would pick 1.53.3",
+      "rule": "cooldown-young-locked",
+      "severity": "note"
+    }
+  ],
+  "summary": {
+    "error": 0,
+    "note": 6,
+    "warning": 0
+  },
+  "tool": "rust1100-check",
+  "toolchains": null,
+  "version": "0.1.0"
+}

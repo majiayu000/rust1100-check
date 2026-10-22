@@ -1,0 +1,10 @@
+# Minimized from nanoqsh/tauri-wasm .github/workflows/ci.yml
+on: [push]
+env:
+    RUSTFLAGS: -Dwarnings
+    MSRV: 1.85
+jobs:
+    msrv:
+        runs-on: ubuntu-latest
+        steps:
+            - run: rustup toolchain install $MSRV && cargo +$MSRV check

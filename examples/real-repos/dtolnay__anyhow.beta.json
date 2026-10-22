@@ -1,0 +1,16 @@
+{
+  "cooldown": null,
+  "files_scanned": 3,
+  "findings": [],
+  "summary": {
+    "error": 0,
+    "note": 0,
+    "warning": 0
+  },
+  "tool": "rust1100-check",
+  "toolchains": {
+    "beta": "rustc 1.100.0-beta.7 (fd8e211ae 2026-10-17)",
+    "stable": "rustc 1.99.0 (b940084d7 2026-09-28)"
+  },
+  "version": "0.1.0"
+}

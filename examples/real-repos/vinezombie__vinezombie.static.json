@@ -1,0 +1,23 @@
+{
+  "cooldown": null,
+  "files_scanned": 1,
+  "findings": [
+    {
+      "column": 22,
+      "file": ".github/workflows/ci.yml",
+      "help": "quote it: `toolchain: \"1.70\"`, or use a full version such as `1.70.0`",
+      "line": 20,
+      "message": "`toolchain: 1.70` is an unquoted YAML number and is loaded as 1.7; rustup would install Rust 1.7.0",
+      "rule": "yaml-float-version-truncated",
+      "severity": "error"
+    }
+  ],
+  "summary": {
+    "error": 1,
+    "note": 0,
+    "warning": 0
+  },
+  "tool": "rust1100-check",
+  "toolchains": null,
+  "version": "0.1.0"
+}

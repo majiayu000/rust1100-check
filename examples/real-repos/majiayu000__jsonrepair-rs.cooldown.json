@@ -1,0 +1,19 @@
+{
+  "cooldown": {
+    "min_publish_age": "7 days",
+    "other_sources": 0,
+    "registry_packages": 62,
+    "unsatisfiable": 0,
+    "young": 0
+  },
+  "files_scanned": 7,
+  "findings": [],
+  "summary": {
+    "error": 0,
+    "note": 0,
+    "warning": 0
+  },
+  "tool": "rust1100-check",
+  "toolchains": null,
+  "version": "0.1.0"
+}

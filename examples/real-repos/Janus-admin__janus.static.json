@@ -1,0 +1,41 @@
+{
+  "cooldown": null,
+  "files_scanned": 18,
+  "findings": [
+    {
+      "column": 22,
+      "file": ".github/workflows/ci.yml",
+      "help": "quote it: `toolchain: \"1.80\"`, or use a full version such as `1.80.0`",
+      "line": 40,
+      "message": "`toolchain: 1.80` is an unquoted YAML number and is loaded as 1.8; dtolnay/rust-toolchain restores the zero for its `toolchain` input, but anything else reading this value sees the truncated number",
+      "rule": "yaml-float-version-truncated",
+      "severity": "note"
+    },
+    {
+      "column": 22,
+      "file": ".github/workflows/ci.yml",
+      "help": "quote it: `toolchain: \"1.80\"`, or use a full version such as `1.80.0`",
+      "line": 58,
+      "message": "`toolchain: 1.80` is an unquoted YAML number and is loaded as 1.8; dtolnay/rust-toolchain restores the zero for its `toolchain` input, but anything else reading this value sees the truncated number",
+      "rule": "yaml-float-version-truncated",
+      "severity": "note"
+    },
+    {
+      "column": 22,
+      "file": ".github/workflows/ci.yml",
+      "help": "quote it: `toolchain: \"1.80\"`, or use a full version such as `1.80.0`",
+      "line": 74,
+      "message": "`toolchain: 1.80` is an unquoted YAML number and is loaded as 1.8; dtolnay/rust-toolchain restores the zero for its `toolchain` input, but anything else reading this value sees the truncated number",
+      "rule": "yaml-float-version-truncated",
+      "severity": "note"
+    }
+  ],
+  "summary": {
+    "error": 0,
+    "note": 3,
+    "warning": 0
+  },
+  "tool": "rust1100-check",
+  "toolchains": null,
+  "version": "0.1.0"
+}

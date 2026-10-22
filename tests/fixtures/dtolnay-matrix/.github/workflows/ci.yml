@@ -1,0 +1,15 @@
+# Minimized from aws/aws-nitro-enclaves-nsm-api .github/workflows/ci.yml
+on: [push]
+jobs:
+    test:
+        name: Test on rust ${{matrix.rust}}
+        runs-on: ubuntu-latest
+        strategy:
+            matrix:
+                rust: [1.92, stable, nightly]
+        steps:
+        - uses: actions/checkout@v2
+        - uses: dtolnay/rust-toolchain@master
+          with:
+              toolchain: ${{matrix.rust}}
+        - run: cargo test --all

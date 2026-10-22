@@ -1,0 +1,32 @@
+{
+  "cooldown": null,
+  "files_scanned": 12,
+  "findings": [
+    {
+      "column": 16,
+      "file": ".github/workflows/ci.yml",
+      "help": "quote it: `rust: \"1.70\"`, or use a full version such as `1.70.0`",
+      "line": 18,
+      "message": "`rust: 1.70` is an unquoted YAML number and is loaded as 1.7; dtolnay/rust-toolchain restores the zero for its `toolchain` input, but anything else reading this value sees the truncated number",
+      "rule": "yaml-float-version-truncated",
+      "severity": "note"
+    },
+    {
+      "column": 19,
+      "file": ".github/workflows/ci.yml",
+      "help": "quote it: `rust: \"1.70\"`, or use a full version such as `1.70.0`",
+      "line": 20,
+      "message": "`rust: 1.70` is an unquoted YAML number and is loaded as 1.7; dtolnay/rust-toolchain restores the zero for its `toolchain` input, but anything else reading this value sees the truncated number",
+      "rule": "yaml-float-version-truncated",
+      "severity": "note"
+    }
+  ],
+  "summary": {
+    "error": 0,
+    "note": 2,
+    "warning": 0
+  },
+  "tool": "rust1100-check",
+  "toolchains": null,
+  "version": "0.1.0"
+}

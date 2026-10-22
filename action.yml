@@ -1,0 +1,35 @@
+name: rust1100-check
+description: Find where your CI, scripts and dependencies break on Rust 1.100
+branding:
+  icon: alert-triangle
+  color: orange
+
+inputs:
+  path:
+    description: Repository root to scan
+    required: false
+    default: "."
+  args:
+    description: Extra arguments, e.g. `--min-publish-age "7 days"` or `--fail-on warning`
+    required: false
+    default: ""
+  version:
+    description: rust1100-check version to install from crates.io
+    required: false
+    default: "0.1.0"
+
+runs:
+  using: composite
+  steps:
+    - name: Install rust1100-check ${{ inputs.version }}
+      shell: bash
+      env:
+        VERSION: ${{ inputs.version }}
+      run: cargo install rust1100-check --locked --version "$VERSION"
+    - name: Run rust1100-check
+      shell: bash
+      env:
+        SCAN_PATH: ${{ inputs.path }}
+        EXTRA_ARGS: ${{ inputs.args }}
+      # EXTRA_ARGS is split by the shell on purpose so several flags can be passed.
+      run: eval "cargo rust1100-check \"\$SCAN_PATH\" --format github $EXTRA_ARGS"

@@ -1,0 +1,13 @@
+on: [push]
+jobs:
+  test:
+    strategy:
+      matrix:
+        rust: ["1.100", "1.90", 1.85.0, stable]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+        with:
+          toolchain: ${{ matrix.rust }}
+      - uses: dtolnay/rust-toolchain@1.100
+      - run: cargo test

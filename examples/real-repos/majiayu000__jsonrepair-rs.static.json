@@ -1,0 +1,13 @@
+{
+  "cooldown": null,
+  "files_scanned": 7,
+  "findings": [],
+  "summary": {
+    "error": 0,
+    "note": 0,
+    "warning": 0
+  },
+  "tool": "rust1100-check",
+  "toolchains": null,
+  "version": "0.1.0"
+}

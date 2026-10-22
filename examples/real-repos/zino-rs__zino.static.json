@@ -1,0 +1,23 @@
+{
+  "cooldown": null,
+  "files_scanned": 4,
+  "findings": [
+    {
+      "column": 22,
+      "file": ".github/workflows/rust-clippy.yml",
+      "help": "quote it: `toolchain: \"1.90\"`, or use a full version such as `1.90.0`",
+      "line": 36,
+      "message": "`toolchain: 1.90` is an unquoted YAML number and is loaded as 1.9; dtolnay/rust-toolchain restores the zero for its `toolchain` input, but anything else reading this value sees the truncated number",
+      "rule": "yaml-float-version-truncated",
+      "severity": "note"
+    }
+  ],
+  "summary": {
+    "error": 0,
+    "note": 1,
+    "warning": 0
+  },
+  "tool": "rust1100-check",
+  "toolchains": null,
+  "version": "0.1.0"
+}
