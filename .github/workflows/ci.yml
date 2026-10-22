@@ -36,3 +36,19 @@ jobs:
           persist-credentials: false
       - uses: dtolnay/rust-toolchain@1.88.0
       - run: cargo check --locked
+
+  action:
+    name: action (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: ./
+        with:
+          min-publish-age: "7 days"
+          fail-on: never
