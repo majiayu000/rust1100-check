@@ -82,3 +82,16 @@ To find real script samples, 7 GitHub code searches were run (`"rustc --version"
 Separately, code search for unquoted trailing-zero versions in workflows (`"toolchain: 1.80"`, `"toolchain: 1.70"`, `"toolchain: 1.90"`, `"rust: 1.70"`, `"msrv: 1.80"`) gave these consumers of an unquoted `1.x0`: actions-rs/toolchain in vinezombie/vinezombie and ranajahanzaib/rico (broken today), and dtolnay/rust-toolchain in zino-rs/zino, Janus-admin/janus, goedelsoup/gensonnet-rs (mitigated).
 
 Fixtures in `tests/fixtures/` are minimized from: SolarLiner/interflow, vinezombie/vinezombie, aws/aws-nitro-enclaves-nsm-api, zino-rs/zino, nanoqsh/tauri-wasm, Poudlardo/Allocine2Letterboxd, Monles/rust-malware-re-comparison; the env case in `yaml::tests` is from tokio-rs/tokio.
+
+## 5. New rule `i686-windows-host-toolchain` (added 2026-10-25)
+
+Added after the runs above. Re-running the 17 repositories in section 1 with it gives the same counts: none of them uses a 32-bit Windows host toolchain.
+
+To test it, 5 GitHub code searches (`"stable-i686-pc-windows" path:.github/workflows` 91 files, `"nightly-i686-pc-windows" path:.github/workflows` 13, `"toolchain: stable-i686"` 65, `"i686-pc-windows" path:rust-toolchain.toml` 0, `"i686-pc-windows-msvc" "toolchain" path:.github/workflows` 3,408) gave 143 distinct files in 134 repositories, scanned as downloaded:
+
+- Reported: 118 lines in 69 repositories. Every reported line was read by hand. All were host toolchains: `toolchain: stable-i686-pc-windows-msvc` (23 lines), `rust: stable-i686-pc-windows-gnu`-style matrix values, `echo "stable-i686-pc-windows-msvc" > rust-toolchain`, `rustup default/install/run/override`, `cargo +nightly-i686-pc-windows-msvc build`, `rustup-init --default-host=i686-pc-windows-msvc`, and names assembled from the matrix (bastion-rs/bastion and bastion-rs/agnostik `${{ matrix.version }}-${{ matrix.toolchain }}`, blckngm/webview2 `${{ matrix.version }}-${{ matrix.arch }}-pc-windows-${{ matrix.env }}`, racer-rust/racer `rustup set default-host ${{ matrix.toolchain }}`).
+- False positives: 0 after one fix (a step `name:` that echoed the matrix toolchain was reported next to the real install step; `name:` is no longer expanded).
+- Not reported: the other 65 repositories. A grep of their files for `<channel>-i686-pc-windows-*` and `default-host` found such names only in files GitHub does not run (vendored subprojects' `.github/workflows`, a README, a build log) or on commented-out lines; everything else mentions the triple only as a cross-compile target (`target:`, `targets:`, `rustup target add`, `--target`).
+
+Fixtures: `tests/fixtures/i686-host` (minimized from bastion-rs/bastion, stanislav-tkach/os_info, racer-rust/racer, alisawuffles/tokenizers-superbpe, llnut/dnf-login) and `tests/fixtures/i686-cross` (cross-compiling forms and a pre-1.100 pin, none reported).
+

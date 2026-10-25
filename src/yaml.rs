@@ -1,13 +1,13 @@
 //! R1/R2: unquoted version numbers in CI YAML, plus extraction of `run:` blocks for script checks.
 
-use std::collections::HashSet;
+use std::collections::{HashMap, HashSet};
 use std::sync::LazyLock;
 
 use regex::Regex;
 use yaml_rust2::parser::{Event, MarkedEventReceiver, Parser};
 use yaml_rust2::scanner::{Marker, TScalarStyle};
 
-use crate::{Finding, Severity, script};
+use crate::{Finding, Severity, i686, script};
 
 pub const TRUNCATED: &str = "yaml-float-version-truncated";
 pub const FRAGILE: &str = "yaml-float-rust-version";
@@ -238,8 +238,86 @@ fn safe_env_keys(scope: &Node) -> HashSet<String> {
     })
 }
 
+static MATRIX_REF: LazyLock<Regex> =
+    LazyLock::new(|| Regex::new(r"\$\{\{\s*matrix\.([A-Za-z0-9_.-]+)\s*\}\}").unwrap());
+
+/// Every scalar a job's matrix can give `matrix.<path>`, from its axes and `include` entries.
+fn matrix_values(job: &Node) -> HashMap<String, Vec<String>> {
+    fn add(path: &str, node: &Node, vals: &mut HashMap<String, Vec<String>>) {
+        match node {
+            Node::Scalar { value, .. } => {
+                let list = vals.entry(path.to_owned()).or_default();
+                if !list.contains(value) {
+                    list.push(value.clone());
+                }
+            }
+            Node::Seq(items) => items.iter().for_each(|i| add(path, i, vals)),
+            Node::Map(entries) => {
+                for (k, v) in entries {
+                    let Some(k) = k.as_str() else { continue };
+                    let sub = if path.is_empty() {
+                        k.to_owned()
+                    } else {
+                        format!("{path}.{k}")
+                    };
+                    add(&sub, v, vals);
+                }
+            }
+            Node::Alias => {}
+        }
+    }
+    let mut vals = HashMap::new();
+    if let Some(Node::Map(entries)) = job.get("strategy").and_then(|s| s.get("matrix")) {
+        for (k, v) in entries {
+            match k.as_str() {
+                Some("include") => add("", v, &mut vals),
+                Some("exclude") | None => {}
+                Some(k) => add(k, v, &mut vals),
+            }
+        }
+    }
+    vals
+}
+
+/// All strings `template` can become with matrix values filled in (capped). Empty when a
+/// placeholder has no known values.
+fn expand(template: &str, vals: &HashMap<String, Vec<String>>) -> Vec<String> {
+    const CAP: usize = 256;
+    let mut outs = vec![template.to_owned()];
+    let mut done = HashSet::new();
+    for c in MATRIX_REF.captures_iter(template) {
+        let placeholder = c.get(0).unwrap().as_str();
+        if !done.insert(placeholder) {
+            continue;
+        }
+        let Some(values) = vals.get(&c[1]) else {
+            return Vec::new();
+        };
+        outs = outs
+            .iter()
+            .flat_map(|o| values.iter().map(move |v| o.replace(placeholder, v)))
+            .take(CAP)
+            .collect();
+    }
+    outs
+}
+
+fn collect_lines<'n>(node: &'n Node, out: &mut Vec<(&'n str, usize)>) {
+    match node {
+        Node::Scalar { value, line, .. } => out.push((value, *line)),
+        Node::Seq(items) => items.iter().for_each(|i| collect_lines(i, out)),
+        // Display names only echo the toolchain; the step that installs it is what matters.
+        Node::Map(entries) => entries
+            .iter()
+            .filter(|(k, _)| k.as_str() != Some("name"))
+            .for_each(|(_, v)| collect_lines(v, out)),
+        Node::Alias => {}
+    }
+}
+
 struct Walker<'f> {
     file: &'f str,
+    text: &'f str,
     out: &'f mut Vec<Finding>,
     scripts: Vec<(String, usize)>,
 }
@@ -265,6 +343,9 @@ impl Walker<'_> {
             Node::Seq(items) => items.iter().for_each(|i| self.walk(i, key, ctx)),
             Node::Map(entries) => {
                 let job = is_job(node);
+                if job {
+                    self.check_matrix_toolchains(node);
+                }
                 let job_keys = job.then(|| safe_matrix_keys(node));
                 let env_keys = (job || node.get("jobs").is_some()).then(|| safe_env_keys(node));
                 let mut base = ctx.clone();
@@ -292,6 +373,44 @@ impl Walker<'_> {
                 }
             }
             Node::Alias => {}
+        }
+    }
+
+    /// R7 on toolchain names assembled from matrix values, e.g.
+    /// `toolchain: ${{ matrix.version }}-${{ matrix.toolchain }}` with `toolchain: i686-pc-windows-msvc`.
+    fn check_matrix_toolchains(&mut self, job: &Node) {
+        let vals = matrix_values(job);
+        if vals.is_empty() {
+            return;
+        }
+        let mut strings = Vec::new();
+        if let Node::Map(entries) = job {
+            for (k, v) in entries {
+                if k.as_str() != Some("strategy") {
+                    collect_lines(v, &mut strings);
+                }
+            }
+        }
+        for (value, first_line) in strings {
+            for (idx, line) in value.lines().enumerate() {
+                if !MATRIX_REF.is_match(line) {
+                    continue;
+                }
+                for expanded in expand(line, &vals) {
+                    // A name spelled out literally (e.g. as the matrix value itself) is
+                    // already reported where it is written.
+                    let found = i686::mentions(&expanded);
+                    if !found.is_empty() && found.iter().any(|m| !self.text.contains(m)) {
+                        i686::check_line(
+                            self.file,
+                            &expanded,
+                            first_line + idx,
+                            Some(line),
+                            self.out,
+                        );
+                    }
+                }
+            }
         }
     }
 
@@ -360,6 +479,7 @@ pub fn check(file: &str, text: &str, out: &mut Vec<Finding>) {
     };
     let mut walker = Walker {
         file,
+        text,
         out,
         scripts: Vec::new(),
     };

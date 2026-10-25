@@ -71,6 +71,13 @@
 - 不影响 `cargo install`（resolver 配置本来就不作用于 install），也不管 git/path 依赖。
 - 需要 Cargo 1.100+ 才会读这些配置（文档 “MSRV: Respected as of 1.100+”）。
 
+### 2.6 i686 Windows 不再提供主机工具链（2026-10-25 补充）
+
+- 官方原文（blog.rust-lang.org，2026-10-02，Mateusz Mikuła、Ralf Jung 代表 Compiler team）：“With Rust 1.100.0 … host tools such as the compiler will be no longer available”，`i686-pc-windows-msvc` 从 Tier 1 with host tools 降为 Tier 1 without host tools，`i686-pc-windows-gnu` 从 Tier 2 with host tools 降为 Tier 2 without host tools；标准库继续发布；32 位 Windows 二进制需要从受支持的主机交叉编译。依据 RFC 3999（msvc）和 MCP 1020（gnu）。
+- draft release notes（#163811）只列出了 `-gnu` 的降级（#161681），`-msvc` 没有单列；以博客为准。
+- dist manifest 实查（10-25）：stable 1.99.1 两个三元组的 rustc、cargo 都在；beta 1.100.0-beta.7 和 nightly 1.101.0 的 rustc、cargo 都不可用，rust-std 可用。nightly 按日期二分：`-gnu` 最后一个有主机工具的是 2026-08-26，`-msvc` 是 2026-09-09。
+- GitHub code search：`"stable-i686-pc-windows" path:.github/workflows` 91 个文件，`"nightly-i686-pc-windows" path:.github/workflows` 13 个，`"toolchain: stable-i686"` 65 个；`"i686-pc-windows-msvc" "toolchain" path:.github/workflows` 3,408 个，但绝大多数是 `target:` 交叉编译写法，不受影响。
+
 ## 3. 竞品
 
 `gh api search/repositories`，按 star 排序取前 3，拆词 11 组：

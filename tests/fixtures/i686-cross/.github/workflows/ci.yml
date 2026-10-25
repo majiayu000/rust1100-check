@@ -1,0 +1,27 @@
+# Cross-compiling to 32-bit Windows keeps working on Rust 1.100: none of this is reported.
+on: [push]
+jobs:
+  build:
+    strategy:
+      matrix:
+        target: [x86_64-pc-windows-msvc, i686-pc-windows-msvc, i686-pc-windows-gnu]
+    runs-on: windows-latest
+    steps:
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.target }}
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          target: i686-pc-windows-msvc
+      - run: rustup target add i686-pc-windows-msvc
+      - run: cargo build --release --target ${{ matrix.target }}
+      - run: cargo test --target=i686-pc-windows-gnu
+      - run: ls target/i686-pc-windows-msvc/release
+  pinned-old-host:
+    strategy:
+      matrix:
+        host: [i686-pc-windows-msvc]
+    runs-on: windows-latest
+    steps:
+      - run: rustup toolchain install 1.85.0-${{ matrix.host }} --force-non-host

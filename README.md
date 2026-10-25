@@ -7,7 +7,7 @@
 
 **Rust 1.100 readiness check for your CI:** finds unquoted versions in GitHub Actions / GitLab CI YAML that `rust-toolchain` setups read as Rust 1.1, MSRV scripts that compare `rustc --version` as strings, new lints on the 1.100 beta, and previews which `Cargo.lock` dependencies Cargo's new `min-publish-age` cooldown would hold back.
 
-Rust 1.100 (2026-11-12) is the first release with a three-digit minor version. Unquoted in YAML, `1.100` is the number 1.1, and rustup installs Rust 1.1.0 from 2015 on a Linux runner. The same thing already happens to `1.70`, `1.80` and `1.90` (read as 1.7, 1.8, 1.9). Scripts that compare versions as strings put `1.100` before `1.99`. The release also stabilizes Cargo lints, changes never-type fallback, and adds `registry.global-min-publish-age`.
+Rust 1.100 (2026-11-12) is the first release with a three-digit minor version. Unquoted in YAML, `1.100` is the number 1.1, and rustup installs Rust 1.1.0 from 2015 on a Linux runner. The same thing already happens to `1.70`, `1.80` and `1.90` (read as 1.7, 1.8, 1.9). Scripts that compare versions as strings put `1.100` before `1.99`. The same release drops the compiler for 32-bit Windows hosts: `stable-i686-pc-windows-msvc` stops installing, while cross-compiling with `--target i686-pc-windows-msvc` keeps working. It also stabilizes Cargo lints, changes never-type fallback, and adds `registry.global-min-publish-age`.
 
 `cargo rust1100-check` is read-only unless you pass `--fix`.
 
@@ -110,10 +110,11 @@ Results on 17 real repositories, including the ones with zero findings, are in [
 | `two-digit-minor-pattern` | warning | `1\.[0-9]{2}`, `1\.\d\d` | `1\.[0-9]+` |
 | `cooldown-unsatisfiable` | error | With `--min-publish-age`, a requirement only versions newer than the age can satisfy | Wait, or `CARGO_RESOLVER_INCOMPATIBLE_PUBLISH_AGE=allow cargo update -p <crate>` |
 | `cooldown-young-locked` | note | Locked version newer than the age: kept, but `cargo update` would pick an older one | Nothing, unless you want the newest |
+| `i686-windows-host-toolchain` (new) | error | A 32-bit Windows **host** toolchain: `stable-i686-pc-windows-msvc`, `nightly-…-gnu`, `1.100.0-i686-…`, `rustup set default-host i686-pc-windows-*`, also when assembled from matrix values like `${{ matrix.version }}-${{ matrix.toolchain }}`. Floating `stable` breaks on Nov 12; `beta`/`nightly` already ship no i686 Windows compiler. Not reported: `--target`, `targets:`, `rustup target add`, toolchains pinned below 1.100 | x86_64 host toolchain + `rustup target add i686-pc-windows-msvc` + `cargo build --target i686-pc-windows-msvc` |
 | `beta-new-diagnostic` | follows the diagnostic | With `--beta-diff`, a warning or error beta reports and the baseline does not | See the [1.100 release notes](https://github.com/rust-lang/rust/issues/163811) |
 | `unparsable-yaml` | warning | A CI YAML file that could not be parsed and so was not checked | Fix the YAML |
 
-What is scanned: `.github/**/*.yml`, `action.yml` anywhere, `.gitlab-ci.yml`, `.circleci/config.yml`, `.travis.yml`, `azure-pipelines.yml`, `.cirrus.yml`, `bitbucket-pipelines.yml`, compose files; shell, Makefile, justfile, Python, JS/TS and `build.rs`, plus `run:`/`script:` blocks inside CI YAML. `.gitignore` is respected.
+What is scanned: `.github/**/*.yml`, `action.yml` anywhere, `.gitlab-ci.yml`, `.circleci/config.yml`, `.travis.yml`, `azure-pipelines.yml`, `.cirrus.yml`, `bitbucket-pipelines.yml`, compose files; shell, Makefile, justfile, Python, JS/TS and `build.rs`, plus `run:`/`script:` blocks inside CI YAML; `rust-toolchain` and `rust-toolchain.toml` (i686 host check only). `.gitignore` is respected.
 
 ### Why dtolnay/rust-toolchain is a note
 

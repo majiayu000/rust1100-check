@@ -31,6 +31,7 @@
 | R4 | warning | `two-digit-minor-pattern` |
 | R5 | error / note | `cooldown-unsatisfiable` / `cooldown-young-locked` |
 | R6 | 跟随诊断 | `beta-new-diagnostic` |
+| R7 | error | `i686-windows-host-toolchain`（2026-10-25 新增） |
 
 ### R1 `yaml-float-version-truncated`（error）
 
@@ -84,6 +85,16 @@
 - **检测**：用 `rustup run <toolchain>` 分别以基线（`--baseline`，默认 `stable`）和 `beta` 运行 `cargo check --workspace --all-targets --message-format=json`，各用独立的 `--target-dir`（`target/rust1100-check/<toolchain>`）。收集 `compiler-message` 的 (level, code, 主 span 文件, 行, 消息)，以及 cargo 自身在 stderr 打印的 `warning:`/`error:`（新的 Cargo lints 走这里）。只报 beta 有、stable 没有的。
 - **误报控制**：键里带行号和消息，同一位置同一诊断不会重复；工具链缺失时明确报错并给出 `rustup toolchain install beta`。
 - 1.100 的已知相关变化（never type fallback、`aligned_fields_in_packed`、重复 `repr`、Cargo lints 等）在 `docs/research.md` 列出，报告里附上 release notes 链接。
+
+### R7 `i686-windows-host-toolchain`（error，2026-10-25 新增）
+
+- **问题**：官方博客（2026-10-02，“Demoting i686 Windows targets to std-only”）：从 1.100.0 起 `i686-pc-windows-msvc` 降为 Tier 1 without host tools，`i686-pc-windows-gnu` 降为 Tier 2 without host tools；std 继续发布，编译器等主机工具不再提供，需要从受支持的主机（如 64 位 Windows）交叉编译。实查 dist manifest：stable 1.99.1 仍有 i686 Windows 的 rustc/cargo；beta 1.100.0-beta.7 和当前 nightly 已经没有，只剩 rust-std。按日期二分：`-gnu` 的主机工具从 nightly-2026-08-27 起消失，`-msvc` 从 nightly-2026-09-10 起消失。
+- **检测**：
+  - 字面量：rustup 工具链名 = 渠道或版本前缀 + 三元组，`(stable|beta|nightly(-YYYY-MM-DD)?|1.N(.P)?)-i686-pc-windows-(msvc|gnu)`；在 CI YAML（含 `run:` 块、matrix 值、action 输入）、脚本、`rust-toolchain`/`rust-toolchain.toml` 的非注释行里逐行匹配。另外匹配 `default-host i686-pc-windows-*`（`rustup set default-host`、`rustup-init --default-host`）。
+  - matrix 展开：GitHub job 里含 `${{ matrix.x }}` 的字符串，用 matrix 各轴和 `include` 的取值代入后再匹配（上限 256 种组合），覆盖 `toolchain: ${{ matrix.version }}-${{ matrix.toolchain }}` 这类拼出来的名字。展开结果里的名字如果已在文件中字面出现，只在字面位置报一次；`name:` 不参与展开。
+  - 是否受影响：`stable` 报（11-12 起坏）；`beta`/`nightly` 报（现在就坏）；`nightly-日期` 按上面的分界日期判断；固定版本 ≥ 1.100 报，< 1.100 不报。
+- **误报控制**：裸三元组 `i686-pc-windows-msvc` 一律视为 target，所以 `target:`/`targets:`、`rustup target add`、`cargo build --target`、`target/i686-…/release` 路径都不报；注释行不报。`exclude` 不参与展开，可能把被排除的组合也算进去（过近似，未在样本中遇到）。
+- **修复**：x86_64 主机工具链 + `rustup target add i686-pc-windows-*`（或 toolchain action 的 `targets:`）+ `cargo build --target i686-pc-windows-*`。
 
 ## 输出
 

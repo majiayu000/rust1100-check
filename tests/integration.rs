@@ -206,3 +206,26 @@ fn fix_quotes_versions_in_place() {
     assert!(scan_static(&dir).unwrap().0.is_empty());
     std::fs::remove_dir_all(&dir).unwrap();
 }
+
+const I686: &str = "i686-windows-host-toolchain";
+
+#[test]
+fn i686_windows_host_toolchains() {
+    let wf = ".github/workflows/ci.yml";
+    assert_eq!(
+        scan("i686-host"),
+        vec![
+            hit(wf, 15, I686, Severity::Error),
+            hit(wf, 19, I686, Severity::Error),
+            hit(wf, 32, I686, Severity::Error),
+            hit(wf, 37, I686, Severity::Error),
+            hit(wf, 38, I686, Severity::Error),
+            hit("sub/rust-toolchain.toml", 2, I686, Severity::Error),
+        ]
+    );
+}
+
+#[test]
+fn i686_windows_cross_compiling_is_not_reported() {
+    assert_eq!(scan("i686-cross"), vec![]);
+}

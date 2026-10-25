@@ -2,6 +2,7 @@
 
 pub mod beta;
 pub mod cooldown;
+pub mod i686;
 pub mod report;
 pub mod script;
 pub mod yaml;
@@ -75,6 +76,10 @@ pub const RULES: &[Rule] = &[
         summary: "Locked version is younger than min-publish-age; a fresh resolve would pick an older one",
     },
     Rule {
+        id: i686::HOST_TOOLCHAIN,
+        summary: "32-bit Windows host toolchain (stable-i686-pc-windows-*), which Rust 1.100 no longer ships",
+    },
+    Rule {
         id: beta::NEW_DIAGNOSTIC,
         summary: "Diagnostic emitted by beta (1.100) but not by stable",
     },
@@ -110,11 +115,16 @@ pub fn fix_yaml(root: &Path, findings: &[Finding]) -> Result<usize, String> {
 pub enum FileKind {
     CiYaml,
     Script,
+    /// `rust-toolchain` / `rust-toolchain.toml`: only the i686 host check applies.
+    Toolchain,
 }
 
 /// Decide whether a repository-relative path is something we check.
 pub fn classify(rel: &str) -> Option<FileKind> {
     let name = rel.rsplit('/').next().unwrap_or(rel);
+    if name == "rust-toolchain" || name == "rust-toolchain.toml" {
+        return Some(FileKind::Toolchain);
+    }
     let is_yaml = name.ends_with(".yml") || name.ends_with(".yaml");
     if is_yaml {
         let stem = name.trim_end_matches(".yml").trim_end_matches(".yaml");
@@ -173,7 +183,12 @@ pub fn scan_static(root: &Path) -> Result<(Vec<Finding>, usize), String> {
         match kind {
             FileKind::CiYaml => yaml::check(&rel, &text, &mut found),
             FileKind::Script => script::check(&rel, &text, 0, &mut found),
+            FileKind::Toolchain => {}
         }
+        i686::check(&rel, &text, &mut found);
+        // A literal toolchain name and its matrix expansion can report the same line twice.
+        let mut seen = std::collections::HashSet::new();
+        found.retain(|f| f.rule != i686::HOST_TOOLCHAIN || seen.insert(f.line));
         let lines: Vec<&str> = text.lines().collect();
         let ignored = |line: usize| {
             [line.checked_sub(1), line.checked_sub(2)]

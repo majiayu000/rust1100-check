@@ -1,0 +1,38 @@
+# Minimized from bastion-rs/bastion, stanislav-tkach/os_info, racer-rust/racer,
+# alisawuffles/tokenizers-superbpe and llnut/dnf-login workflows.
+on: [push]
+jobs:
+  composed:
+    strategy:
+      matrix:
+        toolchain: [x86_64-pc-windows-msvc, i686-pc-windows-msvc]
+        version: [stable, nightly]
+    runs-on: windows-latest
+    steps:
+      - name: Install ${{ matrix.version }}-${{ matrix.toolchain }}
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: ${{ matrix.version }}-${{ matrix.toolchain }}
+  literal:
+    strategy:
+      matrix:
+        rust: [stable-x86_64-pc-windows-gnu, stable-i686-pc-windows-gnu]
+    runs-on: windows-latest
+    steps:
+      - uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: ${{ matrix.rust }}
+  default-host:
+    strategy:
+      matrix:
+        include:
+          - toolchain: i686-pc-windows-msvc
+    runs-on: windows-latest
+    steps:
+      - run: rustup set default-host ${{ matrix.toolchain }}
+  scripts:
+    runs-on: windows-latest
+    steps:
+      - run: |
+          rustup toolchain install stable-i686-pc-windows-gnu --no-self-update
+          echo "stable-i686-pc-windows-msvc" > rust-toolchain
