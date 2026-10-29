@@ -14,6 +14,12 @@ Rust 1.100 (2026-11-12) is the first release with a three-digit minor version. U
 
 ## Install
 
+With Homebrew (macOS, Linux x86_64):
+
+```bash
+brew install majiayu000/tap/rust1100-check
+```
+
 From crates.io (Rust 1.88+):
 
 ```bash
