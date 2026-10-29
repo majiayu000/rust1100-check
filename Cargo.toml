@@ -1,6 +1,6 @@
 [package]
 name = "rust1100-check"
-version = "0.1.0"
+version = "0.2.0"
 edition = "2024"
 rust-version = "1.88"
 description = "Check a Rust repo's CI YAML, rust-toolchain inputs, MSRV scripts and Cargo.lock for Rust 1.100 breakage: unquoted 1.100 read as 1.1, string version compares, new beta lints, and a Cargo min-publish-age cooldown preview"

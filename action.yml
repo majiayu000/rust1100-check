@@ -20,7 +20,7 @@ inputs:
   version:
     description: Release of rust1100-check to use
     required: false
-    default: "0.1.0"
+    default: "0.2.0"
 
 runs:
   using: composite

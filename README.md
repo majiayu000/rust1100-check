@@ -2,6 +2,7 @@
 
 [![CI](https://github.com/majiayu000/rust1100-check/actions/workflows/ci.yml/badge.svg)](https://github.com/majiayu000/rust1100-check/actions/workflows/ci.yml)
 [![Release](https://img.shields.io/github/v/release/majiayu000/rust1100-check)](https://github.com/majiayu000/rust1100-check/releases)
+[![crates.io](https://img.shields.io/crates/v/rust1100-check.svg)](https://crates.io/crates/rust1100-check)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![MSRV 1.88](https://img.shields.io/badge/MSRV-1.88-orange.svg)](Cargo.toml)
 
@@ -13,7 +14,13 @@ Rust 1.100 (2026-11-12) is the first release with a three-digit minor version. U
 
 ## Install
 
-Prebuilt binaries for Linux x86_64 and macOS (arm64, x86_64) are on the [Releases page](https://github.com/majiayu000/rust1100-check/releases). Or build it (Rust 1.88+):
+From crates.io (Rust 1.88+):
+
+```bash
+cargo install rust1100-check --locked
+```
+
+Prebuilt binaries for Linux x86_64 and macOS (arm64, x86_64) are on the [Releases page](https://github.com/majiayu000/rust1100-check/releases). The latest `main` builds with:
 
 ```bash
 cargo install --git https://github.com/majiayu000/rust1100-check --locked
@@ -128,7 +135,7 @@ Cargo 1.100 ignores versions whose index `pubtime` is newer than `global-min-pub
 
 ```yaml
 - uses: actions/checkout@v7
-- uses: majiayu000/rust1100-check@v0.1.0
+- uses: majiayu000/rust1100-check@v0.2.0
   with:
     min-publish-age: "7 days"   # optional
     fail-on: error              # default
