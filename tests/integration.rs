@@ -220,8 +220,31 @@ fn i686_windows_host_toolchains() {
             hit(wf, 32, I686, Severity::Error),
             hit(wf, 37, I686, Severity::Error),
             hit(wf, 38, I686, Severity::Error),
-            hit("sub/rust-toolchain.toml", 2, I686, Severity::Error),
         ]
+    );
+}
+
+/// Written at test time: a committed toolchain file would also be reported when this
+/// repository scans itself in CI, since rustup honours toolchain files in subdirectories.
+#[test]
+fn i686_windows_host_in_rust_toolchain_file() {
+    let dir = std::env::temp_dir().join(format!("rust1100-check-toolchain-{}", std::process::id()));
+    std::fs::create_dir_all(dir.join("sub")).unwrap();
+    std::fs::write(
+        dir.join("sub/rust-toolchain.toml"),
+        "[toolchain]\nchannel = \"beta-i686-pc-windows-msvc\"\n",
+    )
+    .unwrap();
+    std::fs::write(dir.join("rust-toolchain"), "1.85.0-i686-pc-windows-msvc\n").unwrap();
+    let (findings, _) = scan_static(&dir).unwrap();
+    std::fs::remove_dir_all(&dir).unwrap();
+    let got: Vec<_> = findings
+        .into_iter()
+        .map(|f| (f.file, f.line, f.rule, f.severity))
+        .collect();
+    assert_eq!(
+        got,
+        vec![hit("sub/rust-toolchain.toml", 2, I686, Severity::Error)]
     );
 }
 
